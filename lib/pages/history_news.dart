@@ -1,61 +1,100 @@
 import 'package:flutter/material.dart';
 import 'article_detail.dart';
 
+import 'package:cremona_oggi/providers/api.dart';
+import 'package:cremona_oggi/models/article.dart';
+
 class HistoryNewsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GridView.count(
-      padding: EdgeInsets.all(16),
-      crossAxisCount: 2,
-      childAspectRatio: 0.6,
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
-      children: List.generate(10, (int index) {
-        return InkWell(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ArticleDetailPage(),
-                ));
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: double.infinity,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: Colors.indigo,
-                  borderRadius: BorderRadius.circular(12),
-                ),
+  Widget buildArticle(BuildContext context, Article article) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ArticleDetailPage(),
+            ));
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            height: 120,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(article.urlToImage),
+                fit: BoxFit.cover,
               ),
-              SizedBox(
-                height: 16,
-              ),
-              Text(
-                'Casa bianca, Tarrant come pelosi e Correntz - Ultima Ora ',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Text(
-                'Lorem Ipsum è un testo segnaposto utilizzato nel settore della tipografia e della stampa. Lorem Ipsum è considerato il testo segnaposto standard sin dal sedicesimo secolo, quando un anonimo tipografo prese una cassetta di caratteri e li assemblò per preparare un testo campione.',
-                maxLines: 4,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.black54,
-                ),
-              ),
-            ],
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
-        );
-      }),
+          SizedBox(
+            height: 16,
+          ),
+          Text(
+            article.title,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+            ),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Text(
+            article.content,
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.black54,
+            ),
+          ),
+        ],
+      ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: () => _refreshPost(context),
+      color: Colors.red.shade900,
+      child: FutureBuilder(
+          future: historyNews(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.active:
+              case ConnectionState.waiting:
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+
+              case ConnectionState.done:
+                dynamic articles = snapshot.data;
+                articles.removeRange(0, 10);
+
+                return GridView.count(
+                  padding: EdgeInsets.all(16),
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.6,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  children: List.generate(articles.length, (int index) {
+                    return buildArticle(context, articles[index]);
+                  }),
+                );
+
+              default:
+                return Center(
+                  child: Text('ERRORE'),
+                );
+            }
+          }),
+    );
+  }
+}
+
+Future<List<Article>> _refreshPost(BuildContext context) async {
+  return historyNews();
 }

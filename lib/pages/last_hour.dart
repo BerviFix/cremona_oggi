@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'article_detail.dart';
 
+import 'package:cremona_oggi/providers/api.dart';
+import 'package:cremona_oggi/models/article.dart';
+
 class LastHour extends StatelessWidget {
   Widget builderHeader() {
     return Row(
@@ -25,7 +28,7 @@ class LastHour extends StatelessWidget {
     );
   }
 
-  Widget builderHeadline(BuildContext context) {
+  Widget builderHeadline(BuildContext context, Article article) {
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -41,7 +44,10 @@ class LastHour extends StatelessWidget {
             width: double.infinity,
             height: 200,
             decoration: BoxDecoration(
-              color: Colors.indigo,
+              image: DecorationImage(
+                image: NetworkImage(article.urlToImage),
+                fit: BoxFit.cover,
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
           ),
@@ -59,7 +65,7 @@ class LastHour extends StatelessWidget {
             height: 8,
           ),
           Text(
-            'Casa bianca, Tarrant come pelosi e Correntz - Ultima Ora ',
+            article.title,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -69,7 +75,9 @@ class LastHour extends StatelessWidget {
             height: 8,
           ),
           Text(
-            'Lorem Ipsum è un testo segnaposto utilizzato nel settore della tipografia e della stampa. Lorem Ipsum è considerato il testo segnaposto standard sin dal sedicesimo secolo, quando un anonimo tipografo prese una cassetta di caratteri e li assemblò per preparare un testo campione.',
+            article.content,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 14,
               color: Colors.black54,
@@ -80,7 +88,7 @@ class LastHour extends StatelessWidget {
     );
   }
 
-  Widget buildArticle(BuildContext context) {
+  Widget buildArticle(BuildContext context, Article article) {
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -95,7 +103,7 @@ class LastHour extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  'Casa bianca, Tarrant come pelosi e Correntz - Ultima Ora ',
+                  article.title,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -105,7 +113,7 @@ class LastHour extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  'Lorem Ipsum è un testo segnaposto utilizzato nel settore della tipografia e della stampa. Lorem Ipsum è considerato il testo segnaposto standard sin dal sedicesimo secolo, quando un anonimo tipografo prese una cassetta di caratteri e li assemblò per preparare un testo campione.',
+                  article.content,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -123,7 +131,10 @@ class LastHour extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: Colors.indigo,
+              image: DecorationImage(
+                image: NetworkImage(article.urlToImage),
+                fit: BoxFit.cover,
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
           ),
@@ -134,23 +145,51 @@ class LastHour extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.all(16),
-      itemCount: 1 + 10,
-      itemBuilder: (context, index) {
-        if (index == 0)
-          return builderHeader();
-        else if (index == 1)
-          return Padding(
-            padding: EdgeInsets.only(top: 32),
-            child: builderHeadline(context),
-          );
-        else
-          return Padding(
-            padding: EdgeInsets.only(top: 16),
-            child: buildArticle(context),
-          );
-      },
+    return RefreshIndicator(
+      onRefresh: () => _refreshPost(context),
+      color: Colors.red.shade900,
+      child: FutureBuilder(
+          future: lastHour(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.active:
+              case ConnectionState.waiting:
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+
+              case ConnectionState.done:
+                dynamic articles = snapshot.data;
+
+                return ListView.builder(
+                  padding: EdgeInsets.all(16),
+                  itemCount: 1 + 10,
+                  itemBuilder: (context, index) {
+                    if (index == 0)
+                      return builderHeader();
+                    else if (index == 1)
+                      return Padding(
+                        padding: EdgeInsets.only(top: 32),
+                        child: builderHeadline(context, articles[index - 1]),
+                      );
+                    else
+                      return Padding(
+                        padding: EdgeInsets.only(top: 16),
+                        child: buildArticle(context, articles[index - 2 + 1]),
+                      );
+                  },
+                );
+
+              default:
+                return Center(
+                  child: Text('ERRORE'),
+                );
+            }
+          }),
     );
   }
+}
+
+Future<List<Article>> _refreshPost(BuildContext context) async {
+  return lastHour();
 }
