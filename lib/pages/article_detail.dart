@@ -49,33 +49,37 @@ class ArticleDetailPage extends StatelessWidget {
           ),
         ),
       ),
-      body: Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              height: 200,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(article.urlToImage),
-                  fit: BoxFit.cover,
+      body: ListView(
+        children: [
+          Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(article.urlToImage),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                SizedBox(
+                  height: 32,
+                ),
+                Text(
+                  article.content,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 32,
-            ),
-            Text(
-              article.content,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
