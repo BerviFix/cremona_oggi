@@ -34,7 +34,7 @@ class LastHour extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ArticleDetailPage(),
+              builder: (context) => ArticleDetailPage(article),
             ));
       },
       child: Column(
@@ -94,7 +94,7 @@ class LastHour extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ArticleDetailPage(),
+              builder: (context) => ArticleDetailPage(article),
             ));
       },
       child: Row(

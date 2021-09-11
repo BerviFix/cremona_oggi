@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:cremona_oggi/models/article.dart';
+
 class ArticleDetailPage extends StatelessWidget {
+  ArticleDetailPage(this.article);
+  final Article article;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,8 +15,7 @@ class ArticleDetailPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              launch(
-                  'https://pub.dev/documentation/url_launcher/latest/link/link-library.html');
+              launch(article.url);
             },
             icon: Icon(Icons.link),
           ),
@@ -31,7 +35,7 @@ class ArticleDetailPage extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'Casa bianca, Tarrant come pelosi e Correntz - Ultima Ora ',
+                article.title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -53,7 +57,10 @@ class ArticleDetailPage extends StatelessWidget {
               width: double.infinity,
               height: 200,
               decoration: BoxDecoration(
-                color: Colors.indigo,
+                image: DecorationImage(
+                  image: NetworkImage(article.urlToImage),
+                  fit: BoxFit.cover,
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
@@ -61,7 +68,7 @@ class ArticleDetailPage extends StatelessWidget {
               height: 32,
             ),
             Text(
-              'Lorem Ipsum è un testo segnaposto utilizzato nel settore della tipografia e della stampa. Lorem Ipsum è considerato il testo segnaposto standard sin dal sedicesimo secolo, quando un anonimo tipografo prese una cassetta di caratteri e li assemblò per preparare un testo campione.',
+              article.content,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,
