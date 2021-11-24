@@ -67,22 +67,28 @@ class HistoryNewsPage extends StatelessWidget {
               case ConnectionState.active:
               case ConnectionState.waiting:
                 return Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    color: Colors.red.shade900,
+                  ),
                 );
 
               case ConnectionState.done:
                 dynamic articles = snapshot.data;
                 articles.removeRange(0, 10);
 
-                return GridView.count(
-                  padding: EdgeInsets.all(16),
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.6,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  children: List.generate(articles.length, (int index) {
-                    return buildArticle(context, articles[index]);
-                  }),
+                return GlowingOverscrollIndicator(
+                  color: Colors.red,
+                  axisDirection: AxisDirection.down,
+                  child: GridView.count(
+                    padding: EdgeInsets.all(16),
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.6,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    children: List.generate(articles.length, (int index) {
+                      return buildArticle(context, articles[index]);
+                    }),
+                  ),
                 );
 
               default:

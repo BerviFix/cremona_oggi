@@ -21,8 +21,9 @@ class ArticleDetailPage extends StatelessWidget {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(80),
+          preferredSize: Size.fromHeight(60),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 'NOTIZIA CORRENTE',
@@ -39,7 +40,7 @@ class ArticleDetailPage extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                    fontSize: 18,
                     color: Colors.white),
               ),
               SizedBox(

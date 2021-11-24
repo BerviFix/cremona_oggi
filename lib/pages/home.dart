@@ -17,9 +17,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Image.asset('assets/cremonaoggi_logo.png'),
+        title: Text('Cremona Today'),
         centerTitle: true,
-        elevation: 0,
+        elevation: 5,
+        backgroundColor: Colors.red.shade900,
       ),
       // drawer: Container(
       //   width: 300,

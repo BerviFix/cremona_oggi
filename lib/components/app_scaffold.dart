@@ -9,7 +9,7 @@ class AppScaffold extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Colors.white,
+        primaryColor: Colors.red.shade900,
       ),
       home: home,
     );

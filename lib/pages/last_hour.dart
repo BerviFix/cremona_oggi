@@ -6,23 +6,46 @@ import 'package:cremona_oggi/models/article.dart';
 
 class LastHour extends StatelessWidget {
   Widget builderHeader() {
-    return Row(
+    return Column(
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        // TextField(
+        //   decoration: InputDecoration(
+        //     labelText: "Cerca",
+        //     labelStyle: TextStyle(color: Colors.black),
+        //     suffixIcon: Icon(
+        //       Icons.search,
+        //       color: Colors.red.shade900,
+        //     ),
+        //     border: OutlineInputBorder(
+        //         borderSide: BorderSide(color: Colors.red.shade900, width: 2.0),
+        //         borderRadius: BorderRadius.all(Radius.circular(50))),
+        //     focusedBorder: OutlineInputBorder(
+        //         borderSide: BorderSide(color: Colors.red.shade900, width: 1),
+        //         borderRadius: BorderRadius.circular(50)),
+        //   ),
+        // ),
+        SizedBox(
+          height: 16,
+        ),
+        Row(
           children: [
-            Text(
-              "Notizie dell'ultima ora",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Notizie dell'ultima ora",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                Text(
+                  "Ecco le ultime news!",
+                  style: TextStyle(),
+                ),
+              ],
             ),
-            Text(
-              "Ecco le ultime news!",
-              style: TextStyle(),
+            Column(
+              children: [],
             ),
           ],
-        ),
-        Column(
-          children: [],
         ),
       ],
     );
@@ -101,6 +124,7 @@ class LastHour extends StatelessWidget {
         children: [
           Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   article.title,
@@ -155,29 +179,35 @@ class LastHour extends StatelessWidget {
               case ConnectionState.active:
               case ConnectionState.waiting:
                 return Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    color: Colors.red.shade900,
+                  ),
                 );
 
               case ConnectionState.done:
                 dynamic articles = snapshot.data;
 
-                return ListView.builder(
-                  padding: EdgeInsets.all(16),
-                  itemCount: 1 + 10,
-                  itemBuilder: (context, index) {
-                    if (index == 0)
-                      return builderHeader();
-                    else if (index == 1)
-                      return Padding(
-                        padding: EdgeInsets.only(top: 32),
-                        child: builderHeadline(context, articles[index - 1]),
-                      );
-                    else
-                      return Padding(
-                        padding: EdgeInsets.only(top: 16),
-                        child: buildArticle(context, articles[index - 2 + 1]),
-                      );
-                  },
+                return GlowingOverscrollIndicator(
+                  color: Colors.red,
+                  axisDirection: AxisDirection.down,
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(16),
+                    itemCount: 1 + 10,
+                    itemBuilder: (context, index) {
+                      if (index == 0)
+                        return builderHeader();
+                      else if (index == 1)
+                        return Padding(
+                          padding: EdgeInsets.only(top: 32),
+                          child: builderHeadline(context, articles[index - 1]),
+                        );
+                      else
+                        return Padding(
+                          padding: EdgeInsets.only(top: 16),
+                          child: buildArticle(context, articles[index - 2 + 1]),
+                        );
+                    },
+                  ),
                 );
 
               default:
